@@ -1,9 +1,9 @@
 #include <BleKeyboard.h>
 
-BleKeyboard bleKeyboard("PageTurner", "YourName", 100);
+BleKeyboard bleKeyboard("PageTurner", "Benjamin", 100);
 
-const int BTN_NEXT = 12;
-const int BTN_PREV = 14;
+const int BTN_NEXT = 37;
+const int BTN_PREV = 39;
 
 void setup() {
   pinMode(BTN_NEXT, INPUT_PULLUP);
