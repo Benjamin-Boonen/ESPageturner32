@@ -30,44 +30,52 @@ void loop() {
   if (!bleKeyboard.isConnected()) 
   {
     Serial.println("Not connected!! Delay and return...");
+    digitalWrite(STATUS_LIGHT, LOW);
+    delay(100);
+    digitalWrite(STATUS_LIGHT, HIGH);
+    delay(100);
+    digitalWrite(STATUS_LIGHT, LOW);
+    delay(100);
+    digitalWrite(STATUS_LIGHT, HIGH);
     delay(2000);
     return;
   }
-
-  bool pressed = false;
-  
-  if (digitalRead(BTN_NEXT) == LOW) {
-    Serial.println("BUTTON NEXT PRESSED, SENDING KEYSTROKE");
-    bleKeyboard.write(KEY_RIGHT_ARROW);
-    digitalWrite(STATUS_LIGHT, LOW);
-    pressed = true;
-    delay(200);
-    digitalWrite(STATUS_LIGHT, HIGH);
-  }
-  else if (digitalRead(BTN_PREV) == LOW) {
-    Serial.println("BUTTON PREV PRESSED, SENDING KEYSTROKE");
-    bleKeyboard.write(KEY_LEFT_ARROW);
-    digitalWrite(STATUS_LIGHT, LOW);
-    pressed = true;
-    delay(200);
-    digitalWrite(STATUS_LIGHT, HIGH);
-  }
-
-  else {
-    Serial.println("No buttons detected...");
-  }
-
-  if (pressed)
+  else
   {
-    lastActivity = millis();
-  }
+    bool pressed = false;
+    
+    if (digitalRead(BTN_NEXT) == LOW) {
+      Serial.println("BUTTON NEXT PRESSED, SENDING KEYSTROKE");
+      bleKeyboard.write(KEY_RIGHT_ARROW);
+      digitalWrite(STATUS_LIGHT, LOW);
+      pressed = true;
+      delay(200);
+      digitalWrite(STATUS_LIGHT, HIGH);
+    }
+    else if (digitalRead(BTN_PREV) == LOW) {
+      Serial.println("BUTTON PREV PRESSED, SENDING KEYSTROKE");
+      bleKeyboard.write(KEY_LEFT_ARROW);
+      digitalWrite(STATUS_LIGHT, LOW);
+      pressed = true;
+      delay(200);
+      digitalWrite(STATUS_LIGHT, HIGH);
+    }
 
-  if (millis() - lastActivity > KEEPALIVE) {
-    bleKeyboard.print("");
-    lastActivity = millis();
-    Serial.println("Keepalive sent");
-  }
+    else {
+      Serial.println("No buttons detected...");
+    }
 
+    if (pressed)
+    {
+      lastActivity = millis();
+    }
+
+    if (millis() - lastActivity > KEEPALIVE) {
+      bleKeyboard.releaseAll();
+      lastActivity = millis();
+      Serial.println("Keepalive sent");
+    }
+  }
   delay(100);
 
 }
