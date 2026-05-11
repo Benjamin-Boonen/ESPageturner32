@@ -4,8 +4,11 @@ BleKeyboard bleKeyboard("PageTurner", "Benjamin", 100);
 
 const int BTN_NEXT = 37;
 const int BTN_PREV = 39;
-//const int STATUS_LIGHT = 19;
+const int STATUS_LIGHT = 19;
 const int HOLD_PIN = 4;
+
+const int KEEPALIVE = 3000;
+unsigned long lastActivity = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -18,32 +21,52 @@ void setup() {
   Serial.println("Buttons initialized to INPUT");
   bleKeyboard.begin();
   Serial.println("Keyboard started");
-  //pinMode(STATUS_LIGHT, OUTPUT);
-  //digitalWrite(STATUS_LIGHT, HIGH);
-  //Serial.println("Status: ON"); 
+  pinMode(STATUS_LIGHT, OUTPUT);
+  digitalWrite(STATUS_LIGHT, HIGH);
+  Serial.println("Status: ON"); 
 }
 
 void loop() {
   if (!bleKeyboard.isConnected()) 
   {
-    Serial.println("Not connected, delay and return...");
+    Serial.println("Not connected!! Delay and return...");
     delay(2000);
     return;
   }
+
+  bool pressed = false;
   
   if (digitalRead(BTN_NEXT) == LOW) {
     Serial.println("BUTTON NEXT PRESSED, SENDING KEYSTROKE");
     bleKeyboard.write(KEY_RIGHT_ARROW);
+    digitalWrite(STATUS_LIGHT, LOW);
+    pressed = true;
     delay(200);
+    digitalWrite(STATUS_LIGHT, HIGH);
   }
-
-  if (digitalRead(BTN_PREV) == LOW) {
+  else if (digitalRead(BTN_PREV) == LOW) {
     Serial.println("BUTTON PREV PRESSED, SENDING KEYSTROKE");
     bleKeyboard.write(KEY_LEFT_ARROW);
+    digitalWrite(STATUS_LIGHT, LOW);
+    pressed = true;
     delay(200);
+    digitalWrite(STATUS_LIGHT, HIGH);
   }
 
-  Serial.println("No buttons detected...");
+  else {
+    Serial.println("No buttons detected...");
+  }
+
+  if (pressed)
+  {
+    lastActivity = millis();
+  }
+
+  if (millis() - lastActivity > KEEPALIVE) {
+    bleKeyboard.print("");
+    lastActivity = millis();
+    Serial.println("Keepalive sent");
+  }
 
   delay(100);
 
