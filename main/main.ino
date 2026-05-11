@@ -2,9 +2,9 @@
 
 BleKeyboard bleKeyboard("PageTurner", "Benjamin", 100);
 
-const int BTN_NEXT = 37;
-const int BTN_PREV = 39;
-const int STATUS_LIGHT = 19;
+const int BTN_NEXT = 21;
+const int BTN_PREV = 22;
+const int STATUS_LIGHT = 2;
 const int HOLD_PIN = 4;
 
 const int KEEPALIVE = 3000;
@@ -16,8 +16,8 @@ void setup() {
   digitalWrite(HOLD_PIN, HIGH);
   Serial.println("Hold pin HIGH");
 
-  pinMode(BTN_NEXT, INPUT);
-  pinMode(BTN_PREV, INPUT);
+  pinMode(BTN_NEXT, INPUT_PULLDOWN);
+  pinMode(BTN_PREV, INPUT_PULLDOWN);
   Serial.println("Buttons initialized to INPUT");
   bleKeyboard.begin();
   Serial.println("Keyboard started");
@@ -44,7 +44,7 @@ void loop() {
   {
     bool pressed = false;
     
-    if (digitalRead(BTN_NEXT) == LOW) {
+    if (digitalRead(BTN_NEXT) == HIGH) {
       Serial.println("BUTTON NEXT PRESSED, SENDING KEYSTROKE");
       bleKeyboard.write(KEY_RIGHT_ARROW);
       digitalWrite(STATUS_LIGHT, LOW);
@@ -52,7 +52,7 @@ void loop() {
       delay(200);
       digitalWrite(STATUS_LIGHT, HIGH);
     }
-    else if (digitalRead(BTN_PREV) == LOW) {
+    else if (digitalRead(BTN_PREV) == HIGH) {
       Serial.println("BUTTON PREV PRESSED, SENDING KEYSTROKE");
       bleKeyboard.write(KEY_LEFT_ARROW);
       digitalWrite(STATUS_LIGHT, LOW);
