@@ -127,8 +127,8 @@ void BleKeyboard::begin(void)
 #else
 
   BLESecurity* pSecurity = new BLESecurity();
-  pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_MITM_BOND);
-
+	pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
+	
 #endif // USE_NIMBLE
 
   hid->reportMap((uint8_t*)_hidReportDescriptor, sizeof(_hidReportDescriptor));
